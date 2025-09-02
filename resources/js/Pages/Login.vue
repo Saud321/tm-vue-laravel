@@ -90,10 +90,10 @@
 
 import {ref, watch } from "vue";
 import useVuelidate from "@vuelidate/core";
-import { required, email as emailValidator, minLength, helpers } from "@vuelidate/validators";
-import {useAuthStore} from "../stores/auth.js";
-import router from "../router.js";
 
+import router from "../router.js";
+import {useAuthStore} from "../stores/auth.js";
+import {loginValidationRules} from "../validations/loginValidation.js";
 
 const auth = useAuthStore();
 const email = ref("");
@@ -101,19 +101,8 @@ const password = ref("");
 
 const loading = ref(false);
 const errorMessage = ref("");
-// Validation rules with messages
-const rules = {
-    email: {
-        required: helpers.withMessage("Email is required", required),
-        email: helpers.withMessage("Must be a valid email", emailValidator),
-    },
-    password: {
-        required: helpers.withMessage("Password is required", required),
-        minLength: helpers.withMessage("Password must be at least 8 characters", minLength(8)),
-    },
-};
 
-const v$ = useVuelidate(rules, { email, password });
+const v$ = useVuelidate(loginValidationRules, { email, password });
 
 // Real-time validation
 watch(email, () => v$.value.email.$touch());
@@ -128,8 +117,8 @@ const login = async () => {
     errorMessage.value = "";
 
     try {
-        await axios.get('http://localhost:8000/sanctum/csrf-cookie');
 
+        await axios.get('http://localhost:8000/sanctum/csrf-cookie');
         const res = await axios.post('login', {email: email.value, password: password.value});
 
         if (res.status === 200) {
@@ -139,7 +128,6 @@ const login = async () => {
             router.push('/dashboard');
 
         } else {
-
             errorMessage.value = "Invalid credentials";
         }
 

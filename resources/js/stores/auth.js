@@ -18,14 +18,13 @@ export const useAuthStore = defineStore('auth', {
                 return true;
 
             } catch(err) {
-
                 this.user = null;
                 return false;
             }
         },
 
         async logout() {
-            const response = await axios.get('logout');
+            await axios.get('logout');
             localStorage.removeItem('token');
             this.user = null;
             return true;
