@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\LoginRequest;
 use App\Models\User;
 
 use Illuminate\Http\Request;
@@ -56,7 +57,7 @@ class AuthController extends Controller
 
     }
 
-    public function login(Request $request)  :JsonResponse {
+    public function login(LoginRequest $request)  :JsonResponse {
         try {
 
             if(Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
@@ -76,7 +77,7 @@ class AuthController extends Controller
                     'success' => true,
                     'Message' => 'Unauthorised',
                     'data' =>  ['error'=>'Unauthorised']
-                ], 200);
+                ], 401);
             }
 
         } catch (\Exception $e) {
